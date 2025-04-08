@@ -2,7 +2,7 @@ import torch
 from torchvision import transforms, models
 import yaml 
 
-with open("config.yaml", "r") as file:
+with open("./cv/config.yaml", "r") as file:
     config= yaml.safe_load(file)
     file.close()
 
@@ -12,7 +12,7 @@ class Resnet50(torch.nn.Module):
         super(Resnet50, self).__init__()
         resnet_config = config['models']['resnet50_pretrained']
         self.model = models.resnet50(num_classes=resnet_config['classes'])
-        self.model.load_state_dict(torch.load(resnet_config['weights'], map_location=config['device']))
+        # self.model.load_state_dict(torch.load(resnet_config['weights'], map_location=config['device']))
         for param in self.model.parameters():
             param.requires_grad = False
         in_features = self.model.fc.in_features

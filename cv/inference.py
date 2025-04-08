@@ -2,24 +2,21 @@ import torch
 from torchvision import transforms
 from PIL import Image
 import yaml
-import sys
 import os
 
-print(sys.path)
-print(os.listdir('.'))
-sys.path.append("./cv")
-with open("config.yaml", "r") as file:
+
+with open("./cv/config.yaml", "r") as file:
     config= yaml.safe_load(file)
     file.close()
 
-from models import models as current_models
+from cv.models import models as current_models
 
 
 model_weights = {
     # 'custom_cnn': "./weights/custom_cnn_17M/best_model.pth",
     # 'custom_efficient_net': "./weights/custom_efficient_net_17M/best_model.pth",
     # 'custom_vit': "./weights/custom_vit_17M/best_model.pth",
-    'pretrained_resnet50': "./weights/pretrained_resnet50_17M/best_model.pth",
+    'pretrained_resnet50': "./cv/pretrained_resnet50_17M/best_model.pth",
     # 'unet': "",
 }
 device = config['device']
@@ -33,8 +30,9 @@ def load_model(model_name=MODEL_NAME, weight_dir=MODEL_WEIGHT_PATH):
 
     try:
         model.load_state_dict(torch.load(weight_dir, map_location=torch.device(device)))
-    except:
+    except Exception as e:
         print("Erro ao Carregar pesos do Modelo!")
+        print(e)
         return
     print("pesos carregados!")
     return model
@@ -62,9 +60,14 @@ def load_image(img_path):
 def inference(model, x):
     y = model(x)
     y = torch.exp(y)*mean_scaling
-
+    y = y.numpy()
     print(y)
     return y
 
-inference(model, load_image('test1.png'))
-inference(model, load_image('test2.png'))
+def preditct_from_flask_api(file):
+    x = load_image(file)
+    return inference(model, x)
+
+if __name__ == "__main__":
+    inference(model, load_image('test1.png'))
+    inference(model, load_image('test2.png'))
