@@ -1,0 +1,39 @@
+num_classes: 5
+device: "cpu"
+image_size: 224
+epochs: 60
+batch_size: 32
+grad_clip: 5.0
+weight_decay: 0.000025
+
+warmup_steps: 2
+learning_rate: 0.0002
+
+models: 
+  custom_cnn: 
+    layers: [32, 64, 128, 256, 512]
+    convs: [2, 2, 2, 2, 2]
+    fc_hidden: 512
+    dropout_prob: 0.2
+
+  custom_cnn2: 
+    layers: [32, 64, 128, 256]
+    convs: [2, 2, 2, 1]
+    fc_hidden: 128
+    dropout_prob: 0.2
+
+  resnet50_pretrained: 
+    weights: "./models/food2k_resnet50_0.0001.pth"
+    classes: 2000
+  
+  custom_efficientnet: 
+    version: "b4"
+  
+  custom_vit: 
+        patch_size: 16
+        embed_dim: 448
+        num_blocks: 7
+        num_heads: 8
+        mlp_multiplier: 4.0
+    
+    
